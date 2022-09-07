@@ -1,12 +1,17 @@
 import { Request, Response, NextFunction } from "express";
-import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
+import * as errors from '../errors/errorsThrow.js'
 
-export default async function validateToken(req: Request, res: Response, next: NextFunction) {
+export default function validateToken(req: Request, res: Response, next: NextFunction) {
     const token: string = req.headers.authorization.replace('Bearer ', '')
-    const secretKey = process.env.SECRET_KEY
 
-    const decryptedToken = await jwt.decode(token)
+    const decryptedToken: any = jwt.decode(token)
 
-    console.log(decryptedToken)
+    if(decryptedToken.iat > decryptedToken.exp) {
+        throw errors.unhautorized('Token expired')
+    }
+
+    res.locals.userId = decryptedToken.id
+
+    next()
 }

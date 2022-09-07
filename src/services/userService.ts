@@ -31,7 +31,7 @@ export async function signIn(email: string, password: string): Promise<string> {
         throw errors.badRequest('Wrong password')
     }
 
-    const token = jwt.sign({ id: isUser.id, email: isUser.email }, secretKey)
+    const token = jwt.sign({ id: isUser.id, email: isUser.email }, secretKey, { expiresIn: '1h' })
 
     return token
 }
