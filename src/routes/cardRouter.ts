@@ -6,5 +6,7 @@ import * as cardController from '../controllers/cardController.js'
 const cardRouter = Router()
 
 cardRouter.post('/cards', validateToken, validateSchemas('card'), cardController.create)
+cardRouter.get('/cards', validateToken, cardController.getAll)
+cardRouter.get('/cards/:cardId', validateToken, cardController.getById)
 
 export default cardRouter
