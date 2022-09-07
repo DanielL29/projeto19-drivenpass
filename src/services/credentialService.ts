@@ -1,13 +1,9 @@
-import { Credential } from "../interfaces/credentialInterface";
+import { Credential } from "../interfaces/credentialInterface.js";
 import * as credentialRepository from '../repositories/credentialRepository.js'
 import * as errors from '../errors/errorsThrow.js'
 import { CredentialInsertData } from "../types/credentialTypes";
-import dotenv from 'dotenv'
-import Cryptr from "cryptr";
+import { cryptr } from './../index.js';
 
-dotenv.config()
-
-const cryptr = new Cryptr(process.env.CRYPTR_SECREY_KEY)
 
 export async function newCredential(credential: CredentialInsertData, userId: number) {
     const isCredential: Credential = await credentialRepository.findByTitleAndUserId(credential.title, userId)
@@ -17,8 +13,9 @@ export async function newCredential(credential: CredentialInsertData, userId: nu
     }
 
     credential.password = cryptr.encrypt(credential.password)
+    credential.userId = userId
 
-    await credentialRepository.insert(credential, userId)
+    await credentialRepository.insert(credential)
 }
 
 export async function allCredentials(userId: number): Promise<Credential[]> {
