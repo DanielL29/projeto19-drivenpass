@@ -6,5 +6,7 @@ import * as noteController from '../controllers/noteController.js'
 const noteRouter = Router()
 
 noteRouter.post('/notes', validateToken, validateSchemas('note'), noteController.create)
+noteRouter.get('/notes', validateToken, noteController.getAll)
+noteRouter.get('/notes/:noteId', validateToken, noteController.getById)
 
 export default noteRouter

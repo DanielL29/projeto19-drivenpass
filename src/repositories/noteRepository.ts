@@ -18,3 +18,15 @@ export async function findByTitleAndUserId(title: string, userId: number): Promi
 export async function insert(note: NoteInsertData) {
     await prisma.notes.create({ data: note })
 }
+
+export async function findAll(userId: number): Promise<Note[]> {
+    const notes: Note[] = await prisma.notes.findMany({ where: { userId } })
+
+    return notes
+}
+
+export async function findById(id: number): Promise<Note> {
+    const note: Note = await prisma.notes.findUnique({ where: { id } })
+
+    return note
+}   

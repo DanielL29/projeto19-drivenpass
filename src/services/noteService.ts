@@ -14,3 +14,23 @@ export async function newNote(note: NoteInsertData, userId: number) {
 
     await noteRepository.insert(note)
 }
+
+export async function allNotes(userId: number): Promise<Note[]> {
+    const notes: Note[] = await noteRepository.findAll(userId)
+
+    return notes
+}
+
+export async function note(noteId: number, userId: number): Promise<Note> {
+    const isNote: Note = await noteRepository.findById(noteId)
+
+    if(!isNote) {
+        throw errors.notFound('note', 'notes')
+    }
+
+    if(isNote.userId !== userId) {
+        throw errors.badRequest("This note doesn't belong to you")
+    }
+
+    return isNote
+}
