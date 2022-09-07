@@ -6,8 +6,9 @@ export default function validateToken(req: Request, res: Response, next: NextFun
     const token: string = req.headers.authorization.replace('Bearer ', '')
 
     const decryptedToken: any = jwt.decode(token)
+    const now = Math.round(Date.now() / 1000)
 
-    if(decryptedToken.iat > decryptedToken.exp) {
+    if(now > decryptedToken.exp) {
         throw errors.unhautorized('Token expired')
     }
 

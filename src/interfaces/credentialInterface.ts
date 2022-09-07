@@ -4,4 +4,5 @@ export interface Credential {
     url: string
     name: string
     password: string
+    userId: number
 }
