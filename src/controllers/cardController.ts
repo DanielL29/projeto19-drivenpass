@@ -28,3 +28,12 @@ export async function getById(req: Request, res: Response) {
 
     res.status(200).send(card)
 }
+
+export async function remove(req: Request, res: Response) {
+    const cardId: number = Number(req.params.cardId)
+    const userId: number = res.locals.userId
+
+    await cardService.removeCard(cardId, userId)
+
+    res.sendStatus(200)
+}

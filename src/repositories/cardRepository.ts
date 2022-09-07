@@ -30,3 +30,7 @@ export async function findById(id: number): Promise<Card> {
 
     return card
 }
+
+export async function remove(id: number) {
+    await prisma.cards.delete({ where: { id } })
+}

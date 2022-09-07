@@ -52,3 +52,9 @@ export async function card(cardId: number, userId: number): Promise<Card> {
 
     return card
 }
+
+export async function removeCard(cardId: number, userId: number) {
+    await findCardAndOwnerOrError(cardId, userId)
+
+    await cardRepository.remove(cardId)
+}
