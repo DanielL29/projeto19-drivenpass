@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client'
+import pkg from '@prisma/client'
 
-const prisma = new PrismaClient()
+const { PrismaClient } = pkg
 
-export default prisma
+export const prisma = new PrismaClient()
