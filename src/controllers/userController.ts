@@ -10,3 +10,10 @@ export async function create(req: Request, res: Response) {
     res.sendStatus(201)
 }
 
+export async function login(req: Request, res: Response) {
+    const { email, password }: User = req.body
+
+    const token = await userService.signIn(email, password)
+
+    res.status(200).send({ token })
+}
