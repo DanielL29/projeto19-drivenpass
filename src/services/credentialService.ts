@@ -32,7 +32,7 @@ export async function allCredentials(userId: number): Promise<Credential[]> {
     })
 }
 
-export async function credential(id: number, userId: number): Promise<Credential> {
+async function findCredentialAndOwnerOrError(id: number, userId: number): Promise<Credential> {
     const isCredential: Credential = await credentialRepository.findById(id)
 
     if(!isCredential) {
@@ -43,7 +43,19 @@ export async function credential(id: number, userId: number): Promise<Credential
         throw errors.unhautorized("This credential doesn't belong to you")
     }
 
-    isCredential.password = cryptr.decrypt(isCredential.password)
-
     return isCredential
+}
+
+export async function credential(id: number, userId: number): Promise<Credential> {
+    const credential: Credential = await findCredentialAndOwnerOrError(id, userId)
+
+    credential.password = cryptr.decrypt(credential.password)
+
+    return credential
+}
+
+export async function removeCredential(id: number, userId: number) {
+    await findCredentialAndOwnerOrError(id, userId)
+
+    await credentialRepository.remove(id)
 }

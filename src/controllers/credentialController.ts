@@ -17,14 +17,23 @@ export async function getAll(_: Request, res: Response) {
 
     const credentials: Credential[] = await credentialService.allCredentials(userId)
 
-    return res.status(200).send(credentials)
+    res.status(200).send(credentials)
 }
 
-export async function getOne(req: Request, res: Response) {
+export async function getById(req: Request, res: Response) {
     const credentialId: number = Number(req.params.credentialId)
     const userId: number = res.locals.userId
 
     const credential: Credential = await credentialService.credential(credentialId, userId)
 
-    return res.status(200).send(credential)
+    res.status(200).send(credential)
+}
+
+export async function remove(req: Request, res: Response) {
+    const credentialId: number = Number(req.params.credentialId)
+    const userId: number = res.locals.userId
+
+    await credentialService.removeCredential(credentialId, userId)
+
+    res.sendStatus(200)
 }

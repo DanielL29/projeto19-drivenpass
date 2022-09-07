@@ -33,3 +33,7 @@ export async function findById(id: number) {
 
     return credential
 }
+
+export async function remove(id: number) {
+    await prisma.credentials.delete({ where: { id } })
+}
