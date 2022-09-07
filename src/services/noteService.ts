@@ -21,7 +21,7 @@ export async function allNotes(userId: number): Promise<Note[]> {
     return notes
 }
 
-export async function note(noteId: number, userId: number): Promise<Note> {
+async function findNoteAndOwnerOrError(noteId: number, userId: number): Promise<Note> {
     const isNote: Note = await noteRepository.findById(noteId)
 
     if(!isNote) {
@@ -33,4 +33,16 @@ export async function note(noteId: number, userId: number): Promise<Note> {
     }
 
     return isNote
+}
+
+export async function note(noteId: number, userId: number): Promise<Note> {
+    const note: Note = await findNoteAndOwnerOrError(noteId, userId)
+
+    return note
+}
+
+export async function removeNote(noteId: number, userId: number) {
+    await findNoteAndOwnerOrError(noteId, userId)
+
+    await noteRepository.remove(noteId)
 }

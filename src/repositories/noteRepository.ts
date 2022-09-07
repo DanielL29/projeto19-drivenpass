@@ -30,3 +30,7 @@ export async function findById(id: number): Promise<Note> {
 
     return note
 }   
+
+export async function remove(id: number) {
+    await prisma.notes.delete({ where: { id } })
+}

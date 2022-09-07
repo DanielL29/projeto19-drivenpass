@@ -28,3 +28,12 @@ export async function getById(req: Request, res: Response) {
 
     res.status(200).send(note)
 }
+
+export async function remove(req: Request, res: Response) {
+    const userId: number = res.locals.userId
+    const noteId: number = Number(req.params.noteId)
+
+    await noteService.removeNote(noteId, userId)
+
+    res.sendStatus(200)
+}

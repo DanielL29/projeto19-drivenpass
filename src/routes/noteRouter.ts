@@ -8,5 +8,6 @@ const noteRouter = Router()
 noteRouter.post('/notes', validateToken, validateSchemas('note'), noteController.create)
 noteRouter.get('/notes', validateToken, noteController.getAll)
 noteRouter.get('/notes/:noteId', validateToken, noteController.getById)
+noteRouter.delete('/notes/:noteId', validateToken, noteController.remove)
 
 export default noteRouter
