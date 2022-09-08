@@ -17,3 +17,7 @@ export async function findById(id: number): Promise<Wifi> {
 
     return wifi
 }
+
+export async function remove(id: number) {
+    await prisma.wifis.delete({ where: { id } })
+}

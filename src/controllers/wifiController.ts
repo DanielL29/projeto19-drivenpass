@@ -28,3 +28,12 @@ export async function getById(req: Request, res: Response) {
 
     res.status(200).send(wifi)
 }
+
+export async function remove(req: Request, res: Response) {
+    const wifiId: number = Number(req.params.wifiId)
+    const userId: number = res.locals.userId
+
+    await wifiService.removeWifi(wifiId, userId)
+
+    res.sendStatus(200)
+}

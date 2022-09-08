@@ -8,5 +8,6 @@ const wifiRouter = Router()
 wifiRouter.post('/wifis', validateToken, validateSchemas('wifi'), wifiController.create)
 wifiRouter.get('/wifis', validateToken, wifiController.getAll)
 wifiRouter.get('/wifis/:wifiId', validateToken, wifiController.getById)
+wifiRouter.delete('/wifis/:wifiId', validateToken, wifiController.remove)
 
 export default wifiRouter

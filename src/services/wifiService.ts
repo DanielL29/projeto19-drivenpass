@@ -22,8 +22,8 @@ export async function allWifis(userId: number): Promise<Wifi[]> {
     })
 }
 
-async function findWifiAndOwnerOrError(id: number, userId: number): Promise<Wifi> {
-    const isWifi: Wifi = await wifiRepository.findById(id)
+async function findWifiAndOwnerOrError(wifiId: number, userId: number): Promise<Wifi> {
+    const isWifi: Wifi = await wifiRepository.findById(wifiId)
 
     if(!isWifi) {
         throw errors.notFound('wifi', 'wifis')
@@ -36,10 +36,16 @@ async function findWifiAndOwnerOrError(id: number, userId: number): Promise<Wifi
     return isWifi
 }
 
-export async function wifi(id: number, userId: number): Promise<Wifi> {
-    const wifi: Wifi = await findWifiAndOwnerOrError(id, userId)
+export async function wifi(wifiId: number, userId: number): Promise<Wifi> {
+    const wifi: Wifi = await findWifiAndOwnerOrError(wifiId, userId)
 
     wifi.password = cryptr.decrypt(wifi.password)
 
     return wifi
+}
+
+export async function removeWifi(wifiId: number, userId: number) {
+    await findWifiAndOwnerOrError(wifiId, userId)
+
+    await wifiRepository.remove(wifiId)
 }
