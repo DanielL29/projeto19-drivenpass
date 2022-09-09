@@ -41,3 +41,9 @@ export async function document(documentId: number, userId: number): Promise<Docu
 
     return document
 }
+
+export async function removeDocument(documentId: number, userId: number) {
+    await findDocumentAndOwnerOrError(documentId, userId)
+
+    await documentRepository.remove(documentId)
+}

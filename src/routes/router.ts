@@ -3,7 +3,7 @@ import cardRouter from './cardRouter.js'
 import credentialRouter from './credentialRouter.js'
 import documentRouter from './documentRouter.js'
 import noteRouter from './noteRouter.js'
-import userRouter from './userRouter.js'
+import userRouter from './authRouter.js'
 import wifiRouter from './wifiRouter.js'
 
 const router = Router()

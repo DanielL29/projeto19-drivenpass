@@ -28,3 +28,12 @@ export async function getById(req: Request, res: Response) {
 
     res.status(200).send(document)
 }
+
+export async function remove(req: Request, res: Response) {
+    const documentId: number = Number(req.params.documentId)
+    const userId: number = res.locals.userId
+
+    await documentService.removeDocument(documentId, userId)
+
+    res.sendStatus(200)
+}

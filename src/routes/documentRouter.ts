@@ -8,5 +8,6 @@ const documentRouter = Router()
 documentRouter.post('/documents', validateToken, validateSchemas('document'), documentController.create)
 documentRouter.get('/documents', validateToken, documentController.getAll)
 documentRouter.get('/documents/:documentId', validateToken, documentController.getById)
+documentRouter.delete('/documents/:documentId', validateToken, documentController.remove)
 
 export default documentRouter

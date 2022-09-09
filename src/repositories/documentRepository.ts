@@ -23,3 +23,7 @@ export async function findById(id: number): Promise<Document> {
 
     return document
 }
+
+export async function remove(id: number) {
+    await prisma.documents.delete({ where: { id } })
+}
