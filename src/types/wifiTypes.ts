@@ -1,3 +1,4 @@
-import { Wifi } from "../interfaces/wifiInterface.js";
+import { Wifi } from "@prisma/client";
 
-export type WifiInsertData = Omit<Wifi, 'id'>
+
+export type WifiInsertData = Omit<Wifi, 'id' | 'createdAt' | 'userId'>

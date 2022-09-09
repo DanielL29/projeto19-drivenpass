@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { DocumentInsertData } from "../types/documentTypes.js";
 import * as documentService from '../services/documentService.js'
-import { Document } from "../interfaces/documentInterface.js";
+import { Document } from "@prisma/client";
 
 export async function create(req: Request, res: Response) {
     const document: DocumentInsertData = req.body
-    const userId: number = res.locals.userId
+    const userId: string = res.locals.userId
 
     await documentService.newDocument(document, userId)
 
@@ -13,7 +13,7 @@ export async function create(req: Request, res: Response) {
 }
 
 export async function getAll(_: Request, res: Response) {
-    const userId: number = res.locals.userId
+    const userId: string = res.locals.userId
 
     const documents: Document[] = await documentService.allDocuments(userId)
 
@@ -21,8 +21,8 @@ export async function getAll(_: Request, res: Response) {
 }
 
 export async function getById(req: Request, res: Response) {
-    const documentId: number = Number(req.params.documentId)
-    const userId: number = res.locals.userId
+    const documentId: string = req.params.documentId
+    const userId: string = res.locals.userId
 
     const document: Document = await documentService.document(documentId, userId)
 
@@ -30,8 +30,8 @@ export async function getById(req: Request, res: Response) {
 }
 
 export async function remove(req: Request, res: Response) {
-    const documentId: number = Number(req.params.documentId)
-    const userId: number = res.locals.userId
+    const documentId: string = req.params.documentId
+    const userId: string = res.locals.userId
 
     await documentService.removeDocument(documentId, userId)
 

@@ -1,8 +1,9 @@
-import { Card } from "../interfaces/cardInterface.js";
+import { Card } from "@prisma/client"
 
-export type CardTypes = 
-    | 'CREDIT' 
-    | 'DEBIT' 
+
+export type CardTypes =
+    | 'CREDIT'
+    | 'DEBIT'
     | 'BOTH'
 
-export type CardInsertData = Omit<Card, 'id'>
+export type CardInsertData = Omit<Card, 'id' | 'createdAt' | 'userId'>

@@ -1,11 +1,11 @@
+import { Wifi } from "@prisma/client";
 import { Request, Response } from "express";
-import { Wifi } from "../interfaces/wifiInterface.js";
 import * as wifiService from '../services/wifiService.js'
 import { WifiInsertData } from "../types/wifiTypes.js";
 
 export async function create(req: Request, res: Response) {
     const wifi: WifiInsertData = req.body
-    const userId: number = res.locals.userId
+    const userId: string = res.locals.userId
 
     await wifiService.newWifi(wifi, userId)
 
@@ -13,7 +13,7 @@ export async function create(req: Request, res: Response) {
 }
 
 export async function getAll(_: Request, res: Response) {
-    const userId: number = res.locals.userId
+    const userId: string = res.locals.userId
 
     const wifis: Wifi[] = await wifiService.allWifis(userId)
 
@@ -21,8 +21,8 @@ export async function getAll(_: Request, res: Response) {
 }
 
 export async function getById(req: Request, res: Response) {
-    const wifiId: number = Number(req.params.wifiId)
-    const userId: number = res.locals.userId
+    const wifiId: string = req.params.wifiId
+    const userId: string = res.locals.userId
 
     const wifi: Wifi = await wifiService.wifi(wifiId, userId)
 
@@ -30,8 +30,8 @@ export async function getById(req: Request, res: Response) {
 }
 
 export async function remove(req: Request, res: Response) {
-    const wifiId: number = Number(req.params.wifiId)
-    const userId: number = res.locals.userId
+    const wifiId: string = req.params.wifiId
+    const userId: string = res.locals.userId
 
     await wifiService.removeWifi(wifiId, userId)
 

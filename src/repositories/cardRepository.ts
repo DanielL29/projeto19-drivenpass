@@ -1,9 +1,9 @@
+import { Card } from "@prisma/client";
 import { prisma } from "../database/db.js";
-import { Card } from "../interfaces/cardInterface.js";
 import { CardInsertData } from "../types/cardTypes";
 
-export async function findByTitleAndUserId(title: string, userId: number): Promise<Card> {
-    const card: Card = await prisma.cards.findUnique({
+export async function findByTitleAndUserId(title: string, userId: string): Promise<Card> {
+    const card: Card = await prisma.card.findUnique({
         where: {
             title_userId: {
                 title,
@@ -15,22 +15,22 @@ export async function findByTitleAndUserId(title: string, userId: number): Promi
     return card
 }
 
-export async function insert(card: CardInsertData) {
-    await prisma.cards.create({ data: card })
+export async function insert(card: CardInsertData, userId: string) {
+    await prisma.card.create({ data: { ...card, userId } })
 }
 
-export async function findAll(userId: number): Promise<Card[]> {
-    const cards: Card[] = await prisma.cards.findMany({ where: { userId } })
+export async function findAll(userId: string): Promise<Card[]> {
+    const cards: Card[] = await prisma.card.findMany({ where: { userId } })
 
     return cards
 }
 
-export async function findById(id: number): Promise<Card> {
-    const card: Card = await prisma.cards.findUnique({ where: { id } })
+export async function findById(id: string): Promise<Card> {
+    const card: Card = await prisma.card.findUnique({ where: { id } })
 
     return card
 }
 
-export async function remove(id: number) {
-    await prisma.cards.delete({ where: { id } })
+export async function remove(id: string) {
+    await prisma.card.delete({ where: { id } })
 }

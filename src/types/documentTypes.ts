@@ -1,7 +1,7 @@
-import { Document } from "../interfaces/documentInterface.js"
+import { Document } from "@prisma/client"
 
 export type DocumentTypes =
     | 'RG'
     | 'CNH'
 
-export type DocumentInsertData = Omit<Document, 'id'>
+export type DocumentInsertData = Omit<Document, 'id' | 'createdAt' | 'userId'>

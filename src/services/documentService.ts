@@ -1,48 +1,40 @@
 import { DocumentInsertData } from "../types/documentTypes.js";
 import * as documentRepository from '../repositories/documentRepository.js'
-import { Document } from "../interfaces/documentInterface.js";
-import * as errors from '../errors/errorsThrow.js'
+import { Document } from "@prisma/client";
+import { verifyData } from "../utils/verifyDataUtil.js";
+import { modifyData } from "../utils/modifyDataUtil.js";
 
-export async function newDocument(document: DocumentInsertData, userId: number) {
+export async function newDocument(document: DocumentInsertData, userId: string) {
     const isDocument: Document = await documentRepository.findByRegistrationNumber(document.registrationNumber)
 
-    if (isDocument) {
-        throw errors.conflict('registration number is', 'registered')
-    }
+    verifyData.conflictDataExists(isDocument, 'registration number')
+    const issuingBody = modifyData.textUpper(document.issuingBody)
 
-    document.userId = userId
-    document.issuingBody = document.issuingBody.toUpperCase()
-
-    await documentRepository.insert(document)
+    await documentRepository.insert({ ...document, issuingBody }, userId)
 }
 
-export async function allDocuments(userId: number): Promise<Document[]> {
+export async function allDocuments(userId: string): Promise<Document[]> {
     const documents: Document[] = await documentRepository.findAll(userId)
 
     return documents
 }
 
-async function findDocumentAndOwnerOrError(documentId: number, userId: number): Promise<Document> {
+async function findDocumentAndOwnerOrError(documentId: string, userId: string): Promise<Document> {
     const isDocument: Document = await documentRepository.findById(documentId)
 
-    if (!isDocument) {
-        throw errors.notFound('document', 'documents')
-    }
-
-    if (isDocument.userId !== userId) {
-        throw errors.badRequest("This document doesn't belong to you")
-    }
+    verifyData.foundData(isDocument, 'document')
+    verifyData.belongUser(isDocument.userId, userId, 'document')
 
     return isDocument
 }
 
-export async function document(documentId: number, userId: number): Promise<Document> {
+export async function document(documentId: string, userId: string): Promise<Document> {
     const document: Document = await findDocumentAndOwnerOrError(documentId, userId)
 
     return document
 }
 
-export async function removeDocument(documentId: number, userId: number) {
+export async function removeDocument(documentId: string, userId: string) {
     await findDocumentAndOwnerOrError(documentId, userId)
 
     await documentRepository.remove(documentId)

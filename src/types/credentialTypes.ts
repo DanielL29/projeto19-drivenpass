@@ -1,3 +1,4 @@
-import { Credential } from "../interfaces/credentialInterface";
+import { Credential } from "@prisma/client";
 
-export type CredentialInsertData = Omit<Credential, 'id'>
+
+export type CredentialInsertData = Omit<Credential, 'id' | 'createdAt' | 'userId'>

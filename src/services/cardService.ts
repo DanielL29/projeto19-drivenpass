@@ -1,59 +1,46 @@
 import { CardInsertData } from "../types/cardTypes.js";
 import * as cardRepository from '../repositories/cardRepository.js'
-import { Card } from './../interfaces/cardInterface';
-import * as errors from '../errors/errorsThrow.js'
-import { cryptr } from "../index.js";
+import { Card } from "@prisma/client";
+import { verifyData } from "../utils/verifyDataUtil.js";
+import { modifyData } from "../utils/modifyDataUtil.js";
 
-export async function newCard(card: CardInsertData, userId: number) {
+export async function newCard(card: CardInsertData, userId: string) {
     const isCard: Card = await cardRepository.findByTitleAndUserId(card.title, userId)
 
-    if(isCard) {
-        throw errors.conflict('card title is', 'registered')
-    }
+    verifyData.conflictDataExists(isCard, 'card title')
+    const { password, securityCode } = modifyData.encryptPasswordAndCvv(card.password, card.securityCode)
 
-    card.password = cryptr.encrypt(card.password)
-    card.securityCode = cryptr.encrypt(card.securityCode)
-    card.userId = userId
-
-    await cardRepository.insert(card)
+    await cardRepository.insert({ ...card, password, securityCode }, userId)
 }
 
-export async function allCards(userId: number): Promise<Card[]> {
+export async function allCards(userId: string): Promise<Card[]> {
     const cards: Card[] = await cardRepository.findAll(userId)
 
     return cards.map(card => {
-        return {
-            ...card,
-            password: cryptr.decrypt(card.password),
-            securityCode: cryptr.decrypt(card.securityCode)
-        }
+        const { password, securityCode } = modifyData.decryptPasswordAndCvv(card.password, card.securityCode)
+
+        return { ...card, password, securityCode }
     })
 }
 
-async function findCardAndOwnerOrError(cardId: number, userId: number): Promise<Card> {
+async function findCardAndOwnerOrError(cardId: string, userId: string): Promise<Card> {
     const isCard = await cardRepository.findById(cardId)
 
-    if(!isCard) {
-        throw errors.notFound('card', 'cards')
-    }
-
-    if(isCard.userId !== userId) {
-        throw errors.badRequest("This card doesn't belong to you")
-    }
+    verifyData.foundData(isCard, 'card')
+    verifyData.belongUser(isCard.userId, userId, 'card')
 
     return isCard
-} 
-
-export async function card(cardId: number, userId: number): Promise<Card> {
-    const card: Card = await findCardAndOwnerOrError(cardId, userId)
-
-    card.password = cryptr.decrypt(card.password)
-    card.securityCode = cryptr.decrypt(card.securityCode)
-
-    return card
 }
 
-export async function removeCard(cardId: number, userId: number) {
+export async function card(cardId: string, userId: string): Promise<Card> {
+    const card: Card = await findCardAndOwnerOrError(cardId, userId)
+
+    const { password, securityCode } = modifyData.decryptPasswordAndCvv(card.password, card.securityCode)
+
+    return { ...card, password, securityCode }
+}
+
+export async function removeCard(cardId: string, userId: string) {
     await findCardAndOwnerOrError(cardId, userId)
 
     await cardRepository.remove(cardId)

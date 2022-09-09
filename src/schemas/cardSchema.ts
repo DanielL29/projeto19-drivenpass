@@ -1,6 +1,7 @@
 import Joi from 'joi'
+import { CardInsertData } from '../types/cardTypes.js'
 
-const cardSchema = Joi.object({
+const cardSchema = Joi.object<CardInsertData>({
     title: Joi.string().required(),
     number: Joi.string().min(16).max(16).pattern(/[0-9]/).required(),
     name: Joi.string().required(),

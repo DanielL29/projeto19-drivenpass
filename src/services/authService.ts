@@ -1,35 +1,25 @@
-import { User } from "../interfaces/userInterface";
 import * as userRepository from '../repositories/userRepository.js'
-import * as errors from '../errors/errorsThrow.js'
-import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import dotenv from 'dotenv'
+import { User } from '@prisma/client'
+import { verifyData } from '../utils/verifyDataUtil.js'
+import { hash } from '../utils/hashUtils.js'
+import { UserInsertData } from '../types/userTypes.js'
 
-dotenv.config()
+export async function signUp(user: UserInsertData) {
+    const isUser: User = await userRepository.findByEmail(user.email)
 
-export async function signUp(email: string, password: string) {
-    const isUser: User = await userRepository.findByEmail(email)
+    verifyData.conflictDataExists(isUser, 'email')
+    const password: string = hash.hashSync(user.password)
 
-    if(isUser) {
-        throw errors.conflict('email is', 'registered!')
-    }
-
-    const encryptedPassword = bcrypt.hashSync(password, 10)
-
-    await userRepository.insert({ email, password: encryptedPassword })
+    await userRepository.insert({ ...user, password })
 }
 
-export async function signIn(email: string, password: string): Promise<string> {
-    const isUser: User = await userRepository.findByEmail(email)
+export async function signIn(user: UserInsertData): Promise<string> {
+    const isUser: User = await userRepository.findByEmail(user.email)
     const secretKey = process.env.SECRET_KEY
 
-    if(!isUser) {
-        throw errors.notFound('user', 'users')
-    }
-
-    if(!bcrypt.compareSync(password, isUser.password)) {
-        throw errors.badRequest('Wrong password')
-    }
+    verifyData.foundData(isUser, 'user')
+    hash.compareSync(user.password, isUser.password)
 
     const token = jwt.sign({ id: isUser.id, email: isUser.email }, secretKey, { expiresIn: '1h' })
 

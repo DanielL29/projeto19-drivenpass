@@ -1,10 +1,12 @@
 import JoiDate from '@joi/date'
 import JoiBase from 'joi'
 import '@joi/date'
+import { DocumentInsertData } from '../types/documentTypes.js'
 
-const Joi = JoiBase.extend(JoiDate)
+let Joi = JoiBase
+Joi = JoiBase.extend(JoiDate)
 
-const documentSchema = Joi.object({
+const documentSchema = Joi.object<DocumentInsertData>({
     name: Joi.string().required(),
     issueDate: Joi.date().format("DD/MM/YYYY").max(Date.now()).required(),
     validity: Joi.date().format('DD/MM/YYYY').min(Joi.ref('issueDate')).required(),

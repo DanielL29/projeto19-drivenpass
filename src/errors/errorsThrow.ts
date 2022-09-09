@@ -1,21 +1,21 @@
 export function unprocessableEntity(errors?: object[], err?: string): Object {
-    return { 
-        type: 'error_unprocessable_entity', 
+    return {
+        type: 'error_unprocessable_entity',
         message: errors ?? err
     }
 }
 
-export function notFound(err: string, errPlural: string): object {
+export function notFound(err: string): object {
     return {
         type: 'error_not_found',
-        message: `This ${err} was not founded, it doesn't be in ${errPlural} datas`
+        message: `This ${err} was not founded, it doesn't be in ${err}s datas`
     }
 }
 
 export function conflict(err: string, conflict: string): object {
     return {
         type: 'error_conflict',
-        message: `This ${err} already ${conflict}`
+        message: `This ${err} is already ${conflict}`
     }
 }
 

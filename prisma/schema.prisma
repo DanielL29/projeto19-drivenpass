@@ -10,41 +10,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
-  id          Int           @id @default(autoincrement())
-  email       String        @unique
+model User {
+  id          String       @id @default(uuid())
+  email       String       @unique
   password    String
-  credentials Credentials[]
-  notes       Notes[]
-  cards       Cards[]
-  wifis       Wifis[]
-  Documents   Documents[]
+  createdAt   DateTime     @default(now()) @db.Timestamp(6)
+  credentials Credential[]
+  notes       Note[]
+  cards       Card[]
+  wifis       Wifi[]
+  documents   Document[]
+
+  @@map("users")
 }
 
-model Credentials {
-  id       Int    @id @default(autoincrement())
-  title    String
-  url      String
-  name     String
-  password String
-  user     Users  @relation(fields: [userId], references: [id])
-  userId   Int
+model Credential {
+  id        String   @id @default(uuid())
+  title     String
+  url       String
+  name      String
+  password  String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 
   @@unique([title, userId])
+  @@map("credentials")
 }
 
-model Notes {
-  id     Int    @id @default(autoincrement())
-  title  String @db.VarChar(50)
-  note   String @db.VarChar(1000)
-  user   Users  @relation(fields: [userId], references: [id])
-  userId Int
+model Note {
+  id        String   @id @default(uuid())
+  title     String   @db.VarChar(50)
+  note      String   @db.VarChar(1000)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
 
   @@unique([title, userId])
+  @@map("notes")
 }
 
-model Cards {
-  id             Int     @id @default(autoincrement())
+model Card {
+  id             String    @id @default(uuid())
   title          String
   number         String
   name           String
@@ -52,38 +59,46 @@ model Cards {
   expirationDate String
   password       String
   isVirtual      Boolean
-  type           Type
-  user           Users   @relation(fields: [userId], references: [id])
-  userId         Int
+  type           CardTypes
+  createdAt      DateTime  @default(now()) @db.Timestamp(6)
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
 
   @@unique([title, userId])
+  @@map("cards")
 }
 
-enum Type {
+enum CardTypes {
   CREDIT
   DEBIT
   BOTH
 }
 
-model Wifis {
-  id       Int    @id @default(autoincrement())
-  title    String
-  name     String
-  password String
-  user     Users  @relation(fields: [userId], references: [id])
-  userId   Int
+model Wifi {
+  id        String   @id @default(uuid())
+  title     String
+  name      String
+  password  String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@map("wifis")
 }
 
-model Documents {
-  id                 Int           @id @default(autoincrement())
+model Document {
+  id                 String        @id @default(uuid())
   name               String
   issueDate          String
   validity           String
   registrationNumber String        @unique @db.VarChar(12)
   issuingBody        String        @db.VarChar(2)
   type               DocumentTypes
-  user               Users         @relation(fields: [userId], references: [id])
-  userId             Int
+  createdAt          DateTime      @default(now()) @db.Timestamp(6)
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String
+
+  @@map("documents")
 }
 
 enum DocumentTypes {

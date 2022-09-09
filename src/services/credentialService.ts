@@ -1,57 +1,47 @@
-import { Credential } from "../interfaces/credentialInterface.js";
 import * as credentialRepository from '../repositories/credentialRepository.js'
-import * as errors from '../errors/errorsThrow.js'
-import { CredentialInsertData } from "../types/credentialTypes";
-import { cryptr } from './../index.js';
+import { CredentialInsertData } from "../types/credentialTypes.js";
+import { Credential } from '@prisma/client';
+import { modifyData } from '../utils/modifyDataUtil.js';
+import { verifyData } from '../utils/verifyDataUtil.js';
 
 
-export async function newCredential(credential: CredentialInsertData, userId: number) {
+export async function newCredential(credential: CredentialInsertData, userId: string) {
     const isCredential: Credential = await credentialRepository.findByTitleAndUserId(credential.title, userId)
 
-    if(isCredential) {
-        throw errors.conflict('title is', 'registered')
-    }
+    verifyData.conflictDataExists(isCredential, 'credential title')
+    const password = modifyData.encryptPassword(credential.password)
 
-    credential.password = cryptr.encrypt(credential.password)
-    credential.userId = userId
-
-    await credentialRepository.insert(credential)
+    await credentialRepository.insert({ ...credential, password }, userId)
 }
 
-export async function allCredentials(userId: number): Promise<Credential[]> {
+export async function allCredentials(userId: string): Promise<Credential[]> {
     const credentials: Credential[] = await credentialRepository.findAll(userId)
 
     return credentials.map(credential => {
-        return {
-            ...credential,
-            password: cryptr.decrypt(credential.password)
-        }
+        const password = modifyData.decryptPassword(credential.password)
+
+        return { ...credential, password }
     })
 }
 
-async function findCredentialAndOwnerOrError(id: number, userId: number): Promise<Credential> {
+async function findCredentialAndOwnerOrError(id: string, userId: string): Promise<Credential> {
     const isCredential: Credential = await credentialRepository.findById(id)
 
-    if(!isCredential) {
-        throw errors.notFound('credential', 'credentials')
-    }
-
-    if(isCredential.userId !== userId) {
-        throw errors.unhautorized("This credential doesn't belong to you")
-    }
+    verifyData.foundData(isCredential, 'credential')
+    verifyData.belongUser(isCredential.userId, userId, 'credential')
 
     return isCredential
 }
 
-export async function credential(id: number, userId: number): Promise<Credential> {
+export async function credential(id: string, userId: string): Promise<Credential> {
     const credential: Credential = await findCredentialAndOwnerOrError(id, userId)
 
-    credential.password = cryptr.decrypt(credential.password)
+    const password = modifyData.decryptPassword(credential.password)
 
-    return credential
+    return { ...credential, password }
 }
 
-export async function removeCredential(id: number, userId: number) {
+export async function removeCredential(id: string, userId: string) {
     await findCredentialAndOwnerOrError(id, userId)
 
     await credentialRepository.remove(id)

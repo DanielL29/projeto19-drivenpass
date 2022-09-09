@@ -1,3 +1,4 @@
-import { Note } from "../interfaces/noteInterface.js";
+import { Note } from "@prisma/client";
 
-export type NoteInsertData = Omit<Note, 'id'>
+
+export type NoteInsertData = Omit<Note, 'id' | 'createdAt' | 'userId'>
