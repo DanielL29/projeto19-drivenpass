@@ -15,3 +15,29 @@ export async function newDocument(document: DocumentInsertData, userId: number) 
 
     await documentRepository.insert(document)
 }
+
+export async function allDocuments(userId: number): Promise<Document[]> {
+    const documents: Document[] = await documentRepository.findAll(userId)
+
+    return documents
+}
+
+async function findDocumentAndOwnerOrError(documentId: number, userId: number): Promise<Document> {
+    const isDocument: Document = await documentRepository.findById(documentId)
+
+    if (!isDocument) {
+        throw errors.notFound('document', 'documents')
+    }
+
+    if (isDocument.userId !== userId) {
+        throw errors.badRequest("This document doesn't belong to you")
+    }
+
+    return isDocument
+}
+
+export async function document(documentId: number, userId: number): Promise<Document> {
+    const document: Document = await findDocumentAndOwnerOrError(documentId, userId)
+
+    return document
+}

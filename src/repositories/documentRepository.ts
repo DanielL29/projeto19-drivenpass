@@ -11,3 +11,15 @@ export async function findByRegistrationNumber(registrationNumber: string): Prom
 
     return document
 }
+
+export async function findAll(userId: number): Promise<Document[]> {
+    const documents: Document[] = await prisma.documents.findMany({ where: { userId } })
+
+    return documents
+}
+
+export async function findById(id: number): Promise<Document> {
+    const document: Document = await prisma.documents.findUnique({ where: { id } })
+
+    return document
+}
