@@ -11,49 +11,50 @@ datasource db {
 }
 
 model Users {
-  id Int @id @default(autoincrement())
-  email String @unique
-  password String
+  id          Int           @id @default(autoincrement())
+  email       String        @unique
+  password    String
   credentials Credentials[]
-  notes Notes[]
-  cards Cards[]
-  wifis Wifis[]
+  notes       Notes[]
+  cards       Cards[]
+  wifis       Wifis[]
+  Documents   Documents[]
 }
 
 model Credentials {
-  id Int @id @default(autoincrement())
-  title String
-  url String 
-  name String
+  id       Int    @id @default(autoincrement())
+  title    String
+  url      String
+  name     String
   password String
-  user Users @relation(fields: [userId], references: [id])
-  userId Int
+  user     Users  @relation(fields: [userId], references: [id])
+  userId   Int
 
   @@unique([title, userId])
 }
 
 model Notes {
-  id Int @id @default(autoincrement())
-  title String @db.VarChar(50)
-  note String @db.VarChar(1000)
-  user Users @relation(fields: [userId], references: [id])
+  id     Int    @id @default(autoincrement())
+  title  String @db.VarChar(50)
+  note   String @db.VarChar(1000)
+  user   Users  @relation(fields: [userId], references: [id])
   userId Int
 
   @@unique([title, userId])
 }
 
 model Cards {
-  id Int @id @default(autoincrement())
-  title String
-  number String 
-  name String
-  securityCode String
+  id             Int     @id @default(autoincrement())
+  title          String
+  number         String
+  name           String
+  securityCode   String
   expirationDate String
-  password String
-  isVirtual Boolean
-  type Type
-  user Users @relation(fields: [userId], references: [id])
-  userId Int
+  password       String
+  isVirtual      Boolean
+  type           Type
+  user           Users   @relation(fields: [userId], references: [id])
+  userId         Int
 
   @@unique([title, userId])
 }
@@ -65,10 +66,27 @@ enum Type {
 }
 
 model Wifis {
-  id Int @id @default(autoincrement())
-  title String
-  name String
+  id       Int    @id @default(autoincrement())
+  title    String
+  name     String
   password String
-  user Users @relation(fields: [userId], references: [id])
-  userId Int
+  user     Users  @relation(fields: [userId], references: [id])
+  userId   Int
+}
+
+model Documents {
+  id                 Int           @id @default(autoincrement())
+  name               String
+  issueDate          String
+  validity           String
+  registrationNumber String        @unique @db.VarChar(12)
+  issuingBody        String        @db.VarChar(2)
+  type               DocumentTypes
+  user               Users         @relation(fields: [userId], references: [id])
+  userId             Int
+}
+
+enum DocumentTypes {
+  RG
+  CNH
 }

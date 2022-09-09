@@ -1,0 +1,10 @@
+import { Router } from 'express'
+import validateSchemas from '../middlewares/validateSchemas.js'
+import validateToken from '../middlewares/validateToken.js'
+import * as documentController from '../controllers/documentController.js'
+
+const documentRouter = Router()
+
+documentRouter.post('/documents', validateToken, validateSchemas('document'), documentController.create)
+
+export default documentRouter
