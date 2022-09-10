@@ -1,7 +1,7 @@
-export function unprocessableEntity(errors?: object[], err?: string): Object {
+export function unprocessableEntity(err: string): Object {
     return {
         type: 'error_unprocessable_entity',
-        message: errors ?? err
+        message: err
     }
 }
 

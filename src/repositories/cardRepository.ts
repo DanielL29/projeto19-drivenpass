@@ -2,8 +2,8 @@ import { Card } from "@prisma/client";
 import { prisma } from "../database/db.js";
 import { CardInsertData } from "../types/cardTypes";
 
-export async function findByTitleAndUserId(title: string, userId: string): Promise<Card> {
-    const card: Card = await prisma.card.findUnique({
+export async function findByTitleAndUserId(title: string, userId: string): Promise<Card | null> {
+    const card: Card | null = await prisma.card.findUnique({
         where: {
             title_userId: {
                 title,
@@ -25,8 +25,8 @@ export async function findAll(userId: string): Promise<Card[]> {
     return cards
 }
 
-export async function findById(id: string): Promise<Card> {
-    const card: Card = await prisma.card.findUnique({ where: { id } })
+export async function findById(id: string): Promise<Card | null> {
+    const card: Card | null = await prisma.card.findUnique({ where: { id } })
 
     return card
 }

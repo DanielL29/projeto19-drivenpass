@@ -5,7 +5,7 @@ import { verifyData } from "../utils/verifyDataUtil.js";
 import { modifyData } from "../utils/modifyDataUtil.js";
 
 export async function newDocument(document: DocumentInsertData, userId: string) {
-    const isDocument: Document = await documentRepository.findByRegistrationNumber(document.registrationNumber)
+    const isDocument: Document | null = await documentRepository.findByRegistrationNumber(document.registrationNumber)
 
     verifyData.conflictDataExists(isDocument, 'registration number')
     const issuingBody = modifyData.textUpper(document.issuingBody)
@@ -19,17 +19,17 @@ export async function allDocuments(userId: string): Promise<Document[]> {
     return documents
 }
 
-async function findDocumentAndOwnerOrError(documentId: string, userId: string): Promise<Document> {
-    const isDocument: Document = await documentRepository.findById(documentId)
+async function findDocumentAndOwnerOrError(documentId: string, userId: string): Promise<Document | null> {
+    const isDocument: Document | null = await documentRepository.findById(documentId)
 
     verifyData.foundData(isDocument, 'document')
-    verifyData.belongUser(isDocument.userId, userId, 'document')
+    verifyData.belongUser(isDocument!.userId, userId, 'document')
 
     return isDocument
 }
 
-export async function document(documentId: string, userId: string): Promise<Document> {
-    const document: Document = await findDocumentAndOwnerOrError(documentId, userId)
+export async function document(documentId: string, userId: string): Promise<Document | null> {
+    const document: Document | null = await findDocumentAndOwnerOrError(documentId, userId)
 
     return document
 }

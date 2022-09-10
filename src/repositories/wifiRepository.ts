@@ -12,8 +12,8 @@ export async function findAll(userId: string): Promise<Wifi[]> {
     return wifis
 }
 
-export async function findById(id: string): Promise<Wifi> {
-    const wifi: Wifi = await prisma.wifi.findUnique({ where: { id } })
+export async function findById(id: string): Promise<Wifi | null> {
+    const wifi: Wifi | null = await prisma.wifi.findUnique({ where: { id } })
 
     return wifi
 }

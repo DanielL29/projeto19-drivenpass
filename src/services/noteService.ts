@@ -4,7 +4,7 @@ import { Note } from "@prisma/client";
 import { verifyData } from "../utils/verifyDataUtil.js";
 
 export async function newNote(note: NoteInsertData, userId: string) {
-    const isNote: Note = await noteRepository.findByTitleAndUserId(note.title, userId)
+    const isNote: Note | null = await noteRepository.findByTitleAndUserId(note.title, userId)
 
     verifyData.conflictDataExists(isNote, 'note title')
 
@@ -17,17 +17,17 @@ export async function allNotes(userId: string): Promise<Note[]> {
     return notes
 }
 
-async function findNoteAndOwnerOrError(noteId: string, userId: string): Promise<Note> {
-    const isNote: Note = await noteRepository.findById(noteId)
+async function findNoteAndOwnerOrError(noteId: string, userId: string): Promise<Note | null> {
+    const isNote: Note | null = await noteRepository.findById(noteId)
 
     verifyData.foundData(isNote, 'note')
-    verifyData.belongUser(isNote.userId, userId, 'note')
+    verifyData.belongUser(isNote!.userId, userId, 'note')
 
     return isNote
 }
 
-export async function note(noteId: string, userId: string): Promise<Note> {
-    const note: Note = await findNoteAndOwnerOrError(noteId, userId)
+export async function note(noteId: string, userId: string): Promise<Note | null> {
+    const note: Note | null = await findNoteAndOwnerOrError(noteId, userId)
 
     return note
 }

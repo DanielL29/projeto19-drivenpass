@@ -2,9 +2,9 @@ import * as errors from '../errors/errorsThrow.js'
 import { allModels } from '../types/userTypes.js'
 
 export interface VerifyDataLiterals {
-    foundData: (data: allModels, model: string) => void
+    foundData: (data: allModels | null, model: string) => void
     belongUser: (dataUserId: string, userId: string, model: string) => void
-    conflictDataExists: (data: allModels, conflict: string) => void
+    conflictDataExists: (data: allModels | null, conflict: string) => void
 }
 
 export const verifyData: VerifyDataLiterals = {

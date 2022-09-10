@@ -20,21 +20,21 @@ export async function allWifis(userId: string): Promise<Wifi[]> {
     })
 }
 
-async function findWifiAndOwnerOrError(wifiId: string, userId: string): Promise<Wifi> {
-    const isWifi: Wifi = await wifiRepository.findById(wifiId)
+async function findWifiAndOwnerOrError(wifiId: string, userId: string): Promise<Wifi | null> {
+    const isWifi: Wifi | null = await wifiRepository.findById(wifiId)
 
     verifyData.foundData(isWifi, 'wifi')
-    verifyData.belongUser(isWifi.userId, userId, 'wifi')
+    verifyData.belongUser(isWifi!.userId, userId, 'wifi')
 
     return isWifi
 }
 
-export async function wifi(wifiId: string, userId: string): Promise<Wifi> {
-    const wifi: Wifi = await findWifiAndOwnerOrError(wifiId, userId)
+export async function wifi(wifiId: string, userId: string): Promise<Wifi | null> {
+    const wifi: Wifi | null = await findWifiAndOwnerOrError(wifiId, userId)
 
-    const password = modifyData.decryptPassword(wifi.password)
+    const password = modifyData.decryptPassword(wifi!.password)
 
-    return { ...wifi, password }
+    return { ...wifi!, password }
 }
 
 export async function removeWifi(wifiId: string, userId: string) {

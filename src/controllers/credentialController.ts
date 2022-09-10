@@ -24,7 +24,7 @@ export async function getById(req: Request, res: Response) {
     const credentialId: string = req.params.credentialId
     const userId: string = res.locals.userId
 
-    const credential: Credential = await credentialService.credential(credentialId, userId)
+    const credential: Credential | null = await credentialService.credential(credentialId, userId)
 
     res.status(200).send(credential)
 }

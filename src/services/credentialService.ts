@@ -6,7 +6,7 @@ import { verifyData } from '../utils/verifyDataUtil.js';
 
 
 export async function newCredential(credential: CredentialInsertData, userId: string) {
-    const isCredential: Credential = await credentialRepository.findByTitleAndUserId(credential.title, userId)
+    const isCredential: Credential | null = await credentialRepository.findByTitleAndUserId(credential.title, userId)
 
     verifyData.conflictDataExists(isCredential, 'credential title')
     const password = modifyData.encryptPassword(credential.password)
@@ -24,21 +24,21 @@ export async function allCredentials(userId: string): Promise<Credential[]> {
     })
 }
 
-async function findCredentialAndOwnerOrError(id: string, userId: string): Promise<Credential> {
-    const isCredential: Credential = await credentialRepository.findById(id)
+async function findCredentialAndOwnerOrError(id: string, userId: string): Promise<Credential | null> {
+    const isCredential: Credential | null = await credentialRepository.findById(id)
 
     verifyData.foundData(isCredential, 'credential')
-    verifyData.belongUser(isCredential.userId, userId, 'credential')
+    verifyData.belongUser(isCredential!.userId, userId, 'credential')
 
     return isCredential
 }
 
-export async function credential(id: string, userId: string): Promise<Credential> {
-    const credential: Credential = await findCredentialAndOwnerOrError(id, userId)
+export async function credential(id: string, userId: string): Promise<Credential | null> {
+    const credential: Credential | null = await findCredentialAndOwnerOrError(id, userId)
 
-    const password = modifyData.decryptPassword(credential.password)
+    const password = modifyData.decryptPassword(credential!.password)
 
-    return { ...credential, password }
+    return { ...credential!, password }
 }
 
 export async function removeCredential(id: string, userId: string) {

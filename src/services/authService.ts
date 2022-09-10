@@ -6,7 +6,7 @@ import { hash } from '../utils/hashUtils.js'
 import { UserInsertData } from '../types/userTypes.js'
 
 export async function signUp(user: UserInsertData) {
-    const isUser: User = await userRepository.findByEmail(user.email)
+    const isUser: User | null = await userRepository.findByEmail(user.email)
 
     verifyData.conflictDataExists(isUser, 'email')
     const password: string = hash.hashSync(user.password)
@@ -15,13 +15,13 @@ export async function signUp(user: UserInsertData) {
 }
 
 export async function signIn(user: UserInsertData): Promise<string> {
-    const isUser: User = await userRepository.findByEmail(user.email)
-    const secretKey = process.env.SECRET_KEY
+    const isUser: User | null = await userRepository.findByEmail(user.email)
+    const secretKey: string | undefined = process.env.SECRET_KEY
 
     verifyData.foundData(isUser, 'user')
-    hash.compareSync(user.password, isUser.password)
+    hash.compareSync(user.password, isUser!.password)
 
-    const token = jwt.sign({ id: isUser.id, email: isUser.email }, secretKey, { expiresIn: '1h' })
+    const token = jwt.sign({ id: isUser!.id, email: isUser!.email }, secretKey!, { expiresIn: '1h' })
 
     return token
 }

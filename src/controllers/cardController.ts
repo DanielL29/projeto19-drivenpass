@@ -24,7 +24,7 @@ export async function getById(req: Request, res: Response) {
     const cardId: string = req.params.cardId
     const userId: string = res.locals.userId
 
-    const card: Card = await cardService.card(cardId, userId)
+    const card: Card | null = await cardService.card(cardId, userId)
 
     res.status(200).send(card)
 }

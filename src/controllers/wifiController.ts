@@ -24,7 +24,7 @@ export async function getById(req: Request, res: Response) {
     const wifiId: string = req.params.wifiId
     const userId: string = res.locals.userId
 
-    const wifi: Wifi = await wifiService.wifi(wifiId, userId)
+    const wifi: Wifi | null = await wifiService.wifi(wifiId, userId)
 
     res.status(200).send(wifi)
 }

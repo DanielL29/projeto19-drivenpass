@@ -24,7 +24,7 @@ export async function getById(req: Request, res: Response) {
     const userId: string = res.locals.userId
     const noteId: string = req.params.noteId
 
-    const note: Note = await noteService.note(noteId, userId)
+    const note: Note | null = await noteService.note(noteId, userId)
 
     res.status(200).send(note)
 }

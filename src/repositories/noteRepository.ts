@@ -2,8 +2,8 @@ import { Note } from "@prisma/client";
 import { prisma } from "../database/db.js";
 import { NoteInsertData } from "../types/noteTypes.js";
 
-export async function findByTitleAndUserId(title: string, userId: string): Promise<Note> {
-    const note: Note = await prisma.note.findUnique({
+export async function findByTitleAndUserId(title: string, userId: string): Promise<Note | null> {
+    const note: Note | null = await prisma.note.findUnique({
         where: {
             title_userId: {
                 title,
@@ -25,8 +25,8 @@ export async function findAll(userId: string): Promise<Note[]> {
     return notes
 }
 
-export async function findById(id: string): Promise<Note> {
-    const note: Note = await prisma.note.findUnique({ where: { id } })
+export async function findById(id: string): Promise<Note | null> {
+    const note: Note | null = await prisma.note.findUnique({ where: { id } })
 
     return note
 }

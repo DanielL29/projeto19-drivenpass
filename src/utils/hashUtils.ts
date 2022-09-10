@@ -2,7 +2,8 @@ import Cryptr from 'cryptr'
 import bcrypt from 'bcrypt'
 import * as errors from '../errors/errorsThrow.js'
 
-const cryptr = new Cryptr(process.env.CRYPTR_SECRET_KEY)
+const cryptrSecretKey: string | undefined = process.env.CRYPTR_SECRET_KEY
+const cryptr = new Cryptr(cryptrSecretKey!)
 
 interface HashLiterals {
     decrypt: (password: string) => string

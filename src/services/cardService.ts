@@ -5,7 +5,7 @@ import { verifyData } from "../utils/verifyDataUtil.js";
 import { modifyData } from "../utils/modifyDataUtil.js";
 
 export async function newCard(card: CardInsertData, userId: string) {
-    const isCard: Card = await cardRepository.findByTitleAndUserId(card.title, userId)
+    const isCard: Card | null = await cardRepository.findByTitleAndUserId(card.title, userId)
 
     verifyData.conflictDataExists(isCard, 'card title')
     const { password, securityCode } = modifyData.encryptPasswordAndCvv(card.password, card.securityCode)
@@ -23,21 +23,21 @@ export async function allCards(userId: string): Promise<Card[]> {
     })
 }
 
-async function findCardAndOwnerOrError(cardId: string, userId: string): Promise<Card> {
-    const isCard = await cardRepository.findById(cardId)
+async function findCardAndOwnerOrError(cardId: string, userId: string): Promise<Card | null> {
+    const isCard: Card | null = await cardRepository.findById(cardId)
 
     verifyData.foundData(isCard, 'card')
-    verifyData.belongUser(isCard.userId, userId, 'card')
+    verifyData.belongUser(isCard!.userId, userId, 'card')
 
     return isCard
 }
 
-export async function card(cardId: string, userId: string): Promise<Card> {
-    const card: Card = await findCardAndOwnerOrError(cardId, userId)
+export async function card(cardId: string, userId: string): Promise<Card | null> {
+    const card: Card | null = await findCardAndOwnerOrError(cardId, userId)
 
-    const { password, securityCode } = modifyData.decryptPasswordAndCvv(card.password, card.securityCode)
+    const { password, securityCode } = modifyData.decryptPasswordAndCvv(card!.password, card!.securityCode)
 
-    return { ...card, password, securityCode }
+    return { ...card!, password, securityCode }
 }
 
 export async function removeCard(cardId: string, userId: string) {

@@ -24,7 +24,7 @@ export async function getById(req: Request, res: Response) {
     const documentId: string = req.params.documentId
     const userId: string = res.locals.userId
 
-    const document: Document = await documentService.document(documentId, userId)
+    const document: Document | null = await documentService.document(documentId, userId)
 
     res.status(200).send(document)
 }

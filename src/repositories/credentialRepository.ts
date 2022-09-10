@@ -3,7 +3,7 @@ import { prisma } from "../database/db.js";
 import { CredentialInsertData } from "../types/credentialTypes.js";
 
 export async function findByTitleAndUserId(title: string, userId: string): Promise<Credential | null> {
-    const credential: Credential = await prisma.credential.findUnique({
+    const credential: Credential | null = await prisma.credential.findUnique({
         where: {
             title_userId: {
                 title,
@@ -19,7 +19,7 @@ export async function insert(credential: CredentialInsertData, userId: string) {
     await prisma.credential.create({ data: { ...credential, userId } })
 }
 
-export async function findAll(userId: string) {
+export async function findAll(userId: string): Promise<Credential[]> {
     const credentials: Credential[] = await prisma.credential.findMany({
         where: { userId },
         orderBy: { id: 'asc' }
@@ -28,8 +28,8 @@ export async function findAll(userId: string) {
     return credentials
 }
 
-export async function findById(id: string) {
-    const credential: Credential = await prisma.credential.findUnique({ where: { id } })
+export async function findById(id: string): Promise<Credential | null> {
+    const credential: Credential | null = await prisma.credential.findUnique({ where: { id } })
 
     return credential
 }
