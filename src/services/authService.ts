@@ -21,7 +21,7 @@ export async function signIn(user: UserInsertData): Promise<string> {
     verifyData.foundData(isUser, 'user')
     hash.compareSync(user.password, isUser!.password)
 
-    const token = jwt.sign({ id: isUser!.id, email: isUser!.email }, secretKey!, { expiresIn: '1h' })
+    const token = jwt.sign({ id: isUser!.id }, secretKey!, { expiresIn: '1h' })
 
     return token
 }
